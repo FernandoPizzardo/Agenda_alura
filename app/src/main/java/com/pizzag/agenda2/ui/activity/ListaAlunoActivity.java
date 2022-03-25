@@ -2,7 +2,9 @@ package com.pizzag.agenda2.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -12,9 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.pizzag.agenda2.R;
 import com.pizzag.agenda2.dao.AlunoDAO;
+import com.pizzag.agenda2.model.Aluno;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ListaAlunoActivity extends AppCompatActivity {
@@ -58,8 +59,19 @@ public class ListaAlunoActivity extends AppCompatActivity {
 
     private void configuraLista() {
         ListView listaAlunos = findViewById(R.id.activity_main_lista_de_alunos);
+        final List<Aluno> alunos = dao.findAll();
         listaAlunos.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1,
-                dao.findAll()));
+                alunos));
+        listaAlunos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int posicao, long id) {
+                Aluno alunoEscolhido = alunos.get(posicao);
+                Intent goToForm = new Intent(ListaAlunoActivity.this, FormAlunoActivity.class);
+                goToForm.putExtra("Aluno", alunoEscolhido);
+                startActivity(goToForm);
+
+            }
+        });
     }
 }
