@@ -1,9 +1,12 @@
 package com.pizzag.agenda2.ui.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,11 +33,25 @@ public class FormAlunoActivity extends AppCompatActivity {
         setTitle(TITLE_NOVO_ALUNO);
 
         initCampos();
-        SaveBotao();
         Intent dados = getIntent();
 
         carregaAluno(dados);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+         getMenuInflater().inflate(R.menu.activity_form_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        if(itemId == R.id.activity_form_menu){
+            finalizaForm();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void carregaAluno(Intent dados) {
@@ -57,15 +74,6 @@ public class FormAlunoActivity extends AppCompatActivity {
         campoTelefone.setText(alunoM.getTelefone());
     }
 
-    private void SaveBotao() {
-        Button botaoSalvar = findViewById(R.id.activity_button_save);
-        botaoSalvar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finalizaForm();
-            }
-        });
-    }
 
     private void finalizaForm() {
         preencheAluno();

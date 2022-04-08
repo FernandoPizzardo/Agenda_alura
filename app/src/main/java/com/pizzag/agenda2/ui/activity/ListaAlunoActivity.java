@@ -35,6 +35,7 @@ public class ListaAlunoActivity extends AppCompatActivity {
         setTitle(TITLE);
         configuraLista();
 
+
         fabADDsettings();
 
     }
@@ -42,7 +43,7 @@ public class ListaAlunoActivity extends AppCompatActivity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add("Remover");
+        getMenuInflater().inflate(R.menu.activity_lista_aluno_menu, menu);
     }
 
     private void fabADDsettings() {
@@ -89,7 +90,7 @@ public class ListaAlunoActivity extends AppCompatActivity {
 
             private void abreFormEditAluno(Aluno alunoEscolhido) {
                 Intent goToForm = new Intent(ListaAlunoActivity.this, FormAlunoActivity.class);
-                goToForm.putExtra(  CHAVE_ALUNO, alunoEscolhido);
+                goToForm.putExtra(CHAVE_ALUNO, alunoEscolhido);
                 startActivity(goToForm);
             }
         });
@@ -97,6 +98,14 @@ public class ListaAlunoActivity extends AppCompatActivity {
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
+        final int itemId = item.getItemId();
+        CharSequence tituloDoMenu = item.getTitle();
+        if (itemId == R.id.activity_lista_alunos_menu) {
+            AdapterView.AdapterContextMenuInfo menuInfo =
+                    (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            Aluno aluno = adapter.getItem(menuInfo.position);
+            dao.remove(aluno);
+        }
         return super.onContextItemSelected(item);
     }
 
