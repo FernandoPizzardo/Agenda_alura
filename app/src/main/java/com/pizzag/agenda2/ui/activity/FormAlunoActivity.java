@@ -1,6 +1,5 @@
 package com.pizzag.agenda2.ui.activity;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -15,34 +14,47 @@ import com.pizzag.agenda2.model.Aluno;
 
 public class FormAlunoActivity extends AppCompatActivity {
 
-    public static final String NOVO_ALUNO = "Novo Aluno";
+    public static final String TITLE_NOVO_ALUNO = "Novo Aluno";
+    public static final String CHAVE_ALUNO = "Aluno";
+    private static final String TITLE_ALUNO_EDIT = "Editar Aluno";
     private EditText campoNome;
     private EditText campoTelefone;
     private EditText campoEmail;
     private final AlunoDAO dao = new AlunoDAO();
-    private  Aluno alunoM;
+    private Aluno alunoM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form_aluno);
-        setTitle(NOVO_ALUNO);
+        setTitle(TITLE_NOVO_ALUNO);
 
         initCampos();
         SaveBotao();
         Intent dados = getIntent();
 
-        if (dados.hasExtra("Aluno") || alunoM != null) {
-            Intent getDados = getIntent();
-            alunoM = (Aluno) getDados.getSerializableExtra("Aluno");
-            campoNome.setText(alunoM.getNome());
-            campoEmail.setText(alunoM.getEmail());
-            campoTelefone.setText(alunoM.getTelefone());
-        }
-        else{
+        carregaAluno(dados);
+
+    }
+
+    private void carregaAluno(Intent dados) {
+        Intent getDados = getIntent();
+        if (dados.hasExtra(CHAVE_ALUNO) || alunoM != null) {
+            setTitle(TITLE_ALUNO_EDIT);
+
+            alunoM = (Aluno) getDados.getSerializableExtra(CHAVE_ALUNO);
+            preencheCampos();
+        } else {
+            setTitle(TITLE_NOVO_ALUNO);
+            alunoM = new Aluno();
 
         }
+    }
 
+    private void preencheCampos() {
+        campoNome.setText(alunoM.getNome());
+        campoEmail.setText(alunoM.getEmail());
+        campoTelefone.setText(alunoM.getTelefone());
     }
 
     private void SaveBotao() {
@@ -50,18 +62,19 @@ public class FormAlunoActivity extends AppCompatActivity {
         botaoSalvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Aluno aluno = criaAluno(campoNome, campoTelefone, campoEmail);
-//
-//
-//                dao.save(aluno);
-//
-//                finish();
-                preencheAluno();
-                dao.edit(alunoM);
-
-
+                finalizaForm();
             }
         });
+    }
+
+    private void finalizaForm() {
+        preencheAluno();
+        if (alunoM.temIdValido()) {
+            dao.edit(alunoM);
+        } else {
+            dao.save(alunoM);
+        }
+        finish();
     }
 
     private void initCampos() {
